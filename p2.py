@@ -5,6 +5,7 @@ from PIL import Image
 import numpy as np
 from io import BytesIO
 import requests
+import base64
 
 # Load the pre-trained model
 model = tf.keras.models.load_model('fruit_model.h5')
@@ -50,16 +51,24 @@ def display_image_and_prediction(img, predict_fruits_result, probability):
     st.success(f"Nama Buahnya adalah: {predict_fruits_result} dengan probabilitas: {probability:.1%}")
 
 # Streamlit UI
-st.title("Prediksi Buah-buahan Tropis dan Non-tropis")
+st.markdown("""
+    <h1 style='text-align: center;'>Prediksi Buah-buahan yang ada di Indonesia</h1>
+""", unsafe_allow_html=True)
+
+# Menampilkan gambar di bawah judul
+image_url = "https://1.bp.blogspot.com/-MwX8IZpmNr8/V5B0Y72sOPI/AAAAAAAAARw/fLZIW9RdymQg4nLQLLLV_TI4LMeQ9MAQgCEw/s1600/buah-buahan.jpeg"
+st.image(image_url, use_column_width=True)
 
 # Option to upload image file
-uploaded_file = st.file_uploader("Masukan Image Buah-buahan...", type=["jpg", "jpeg","png"])
+uploaded_file = st.file_uploader("Masukkan Gambar Buah-buahan...", type=["jpg", "jpeg", "png"])
 if uploaded_file is not None:
-    # Display the uploaded image
+    # Display the uploaded image with a specified width
     img = Image.open(uploaded_file)
-    st.image(img, caption="Uploaded Image.", use_column_width=True)
+    uploaded_image = st.image(img, caption="Uploaded Image.", width=300, )
 
-    # Make predictions when the user clicks the button
-    if st.button("Predict"):
-        predict_fruits_result, probability = predict_fruits(img)
-        display_image_and_prediction(img, predict_fruits_result, probability)
+# Make predictions when the user clicks the button
+if st.button("Predict"):
+    predict_fruits_result, probability = predict_fruits(img)
+    
+    # Menampilkan hasil prediksi
+    st.success(f"Nama Buahnya adalah: {predict_fruits_result} dengan probabilitas: {probability:.1%}")
